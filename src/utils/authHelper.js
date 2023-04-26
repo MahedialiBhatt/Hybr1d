@@ -1,9 +1,11 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const { ACCESS_TOKEN_SECRET, JWT_ACCESS_TOKEN_EXPIRE_TIME } = process.env;
+
 function getNewAccessToken(options) {
-  const token = jwt.sign(options, accessTokenPrivate, {
-    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE_TIME,
+  const token = jwt.sign(options, ACCESS_TOKEN_SECRET, {
+    expiresIn: JWT_ACCESS_TOKEN_EXPIRE_TIME,
   });
   return token;
 }
