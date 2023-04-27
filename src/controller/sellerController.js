@@ -1,4 +1,5 @@
 const sellerService = require("../service/sellerService");
+const buyerService = require("../service/buyerService");
 const {
   getLoggedInUserId,
   invoker,
@@ -27,6 +28,25 @@ async function createCatalog(req, res) {
 
   if (!name || !desc || !items || items.length == 0) {
     return writeResponse({ code: 400, message: "Bad Request" }, null, res);
+  }
+
+  const [isCatalogExist, err0] = await invoker(
+    buyerService.getCatalogBySellerId(sellerId)
+  );
+
+  if (err0) {
+    return writeResponse({ code: 400, message: "Bad Request" }, null, res);
+  }
+
+  if (isCatalogExist) {
+    return writeResponse(
+      {
+        code: 409,
+        message: "Catalog already exist... Seller can have only one Catalag",
+      },
+      null,
+      res
+    );
   }
 
   const [response, err] = await invoker(

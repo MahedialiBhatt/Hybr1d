@@ -12,6 +12,33 @@ async function register(req, res) {
     return writeResponse({ code: 400, message: "Bad Request" }, null, res);
   }
 
+  const [isUserExist, err0] = await invoker(
+    authService.getUserByUsername(username)
+  );
+
+  if (err0) {
+    return writeResponse(
+      {
+        code: 500,
+        message: "Something went wrong while fetching user.",
+      },
+      null,
+      res
+    );
+  }
+
+  if (isUserExist) {
+    return writeResponse(
+      {
+        code: 409,
+        message:
+          "Sorry, that username is already taken. Please choose a different username.",
+      },
+      null,
+      res
+    );
+  }
+
   const [response, err] = await invoker(
     authService.register(username, password, userType)
   );
